@@ -19,6 +19,7 @@ def log(func):
             except Exception, e:
                 print 'Exception in %s : %s' % (methodname, e)
         finally:
+            #pass
             print "%sExiting %s.%s" % (stack_level*' ', classname, methodname)
     return wrapped
 
@@ -31,4 +32,5 @@ set_as_top(model)
 setattr( Assembly, 'run', log( Assembly.run ) )
 setattr( Driver, 'run', log( Driver.run ) )
 
+print "top"
 model.run()
