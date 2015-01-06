@@ -9,8 +9,6 @@ def log(func,outfile=sys.stdout):
     def wrapped(*qargs, **kwargs):
         try:
             stack_level = len(traceback.extract_stack()) - 2
-            #print traceback.extract_stack()
-            #import pdb; pdb.set_trace()
             line_num_called_from = traceback.extract_stack()[-2][1]
             line_num_of_func = inspect.getsourcelines(func)[1]
             classname_of_self = qargs[0].__class__.__name__
@@ -18,23 +16,16 @@ def log(func,outfile=sys.stdout):
             methodname = func.__name__
             method_args = []
             for anarg in qargs[1:]:
-                #if isinstance(anarg,object):
                 if hasattr(anarg,"__module__"):
-                    #import pdb; pdb.set_trace()
                     method_args.append( anarg.__module__ + "." + anarg.__class__.__name__ )
                 else:
                     method_args.append(anarg)
-            #import pdb; pdb.set_trace()
-            #print "%s<call func='%s.%s' params='%s'>" % (stack_level*' ', classname, methodname, qargs[1:])
-            #print >>outfile,"%s<call func='%s.%s' id='%d' params='%s'>" % (stack_level*' ', classname, methodname, id(qargs[0]), qargs[1:])
-            #print >>outfile,'%s<call func="%s.%s" self="%s(%d)" params="%s">' % (stack_level*' ', classname_of_method, methodname, classname_of_self, id(qargs[0]), qargs[1:])
             print >>outfile,'%s<call func="%s.%s(%d)" self="%s(%d)" params="%s">' % (stack_level*' ', classname_of_method, methodname, line_num_of_func, classname_of_self, id(qargs[0]), method_args)
             try:
                 return func(*qargs, **kwargs)
             except Exception, e:
                 print >>outfile,'Exception in %s.%s : %s' % (classname_of_method,methodname, e)
         finally:
-            #pass
             print >>outfile,"%s</call><!-- func=%s.%s -->" % (stack_level*' ', classname_of_method, methodname)
     return wrapped
 
